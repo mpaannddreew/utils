@@ -1,0 +1,17 @@
+{
+    "name": "fannypack/utils",
+    "authors": [
+        {
+            "name": "Mpande Andrew",
+            "email": "andrewmvp007@gmail.com"
+        }
+    ],
+    "require": {
+
+    },
+    "autoload": {
+        "psr-4": {
+            "FannyPack\\Utils\\": "src/"
+        }
+    }
+}
