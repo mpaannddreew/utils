@@ -6,10 +6,12 @@
  * Time: 12:09 PM
  */
 
-namespace FannyPack\Utils;
+namespace FannyPack\Utils\Fcm;
 
 
-class FcmPacket
+use FannyPack\Utils\Fcm\Messages\Payload;
+
+class Packet
 {
     const HTTP_PIPELINE = 'http';
     const XMPP_PIPELINE = 'xmpp';
@@ -19,91 +21,113 @@ class FcmPacket
      *
      * @var array
      */
-    public $registration_ids = [];
+    protected $registration_ids = [];
 
     /**
      * recipient registration id | topic | group id
      *
      * @var null|string
      */
-    public $to;
+    protected $to;
 
     /**
      * condition for recipient topics
      *
      * @var null|string
      */
-    public $condition;
+    protected $condition;
 
     /**
-     * notification message
+     * notification payload
      *
-     * @var FcmMessage|null
+     * @var Payload|null
      */
-    public $message;
+    protected $payload;
 
     /**
      * fcm connection server protocol
      *
      * @var string
      */
-    public $pipeline = self::HTTP_PIPELINE;
+    protected $pipeline = self::HTTP_PIPELINE;
 
     /**
-     * @var string|null
+     * @var
      */
     protected $message_id;
 
     /**
-     * FcmPacket constructor.
+     * Packet constructor.
      * @param string $pipeline
      * @param string|null $registration_id
      * @param array $registration_ids
      * @param string|null $condition
-     * @param FcmMessage|null $message
+     * @param Payload|null $payload
      */
-    public function __construct($pipeline = self::HTTP_PIPELINE, $registration_id = null, $registration_ids = [], $condition = null, FcmMessage $message = null)
+    public function __construct($pipeline = self::HTTP_PIPELINE, $registration_id = null, $registration_ids = [], $condition = null, Payload $payload = null)
     {
         $this->pipeline = $pipeline;
         $this->to = $registration_id;
         $this->registration_ids = $registration_ids;
         $this->condition = $condition;
-        $this->message = $message;
+        $this->payload = $payload;
+        if ($this->pipeline == self::XMPP_PIPELINE)
+            $this->message_id = $this->generateMessageId();
     }
 
     /**
-     * set notification message
-     *
-     * @param FcmMessage $message
+     * @return Payload|null
+     */
+    public function getPayload()
+    {
+        return $this->payload;
+    }
+
+    /**
+     * @param Payload|null $payload
      * @return $this
      */
-    public function message(FcmMessage $message)
+    public function setPayload(Payload $payload)
     {
-        $this->message = $message;
+        $this->payload = $payload;
 
         return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getTo()
+    {
+        return $this->to;
     }
 
     /**
      * set recipient registration id | topic | group id
      *
-     * @param $registration_id
+     * @param null|string $to
      * @return $this
      */
-    public function to($registration_id)
+    public function setTo($to)
     {
-        $this->to = $registration_id;
+        $this->to = $to;
 
         return $this;
     }
 
     /**
-     * override recipient registration ids
-     *
+     * @return array
+     */
+    public function getRegistrationIds()
+    {
+        return $this->registration_ids;
+    }
+
+    /**
      * @param array $registration_ids
      * @return $this
      */
-    public function toMany($registration_ids = [])
+    public function setRegistrationIds($registration_ids)
     {
         $this->registration_ids = $registration_ids;
 
@@ -116,7 +140,7 @@ class FcmPacket
      * @param $registration_id
      * @return $this
      */
-    public function addRecipientId($registration_id)
+    public function addRegistrationId($registration_id)
     {
         $this->registration_ids[] = $registration_id;
 
@@ -124,25 +148,40 @@ class FcmPacket
     }
 
     /**
-     * set new FCM connection server protocol
-     *
-     * @param $pipeline
-     * @return $this
+     * @return string
      */
-    public function pipeline($pipeline)
+    public function getPipeline()
     {
-        $this->pipeline = $pipeline;
-
-        return $this->setMessageId();
+        return $this->pipeline;
     }
 
     /**
-     * set recipient topic condition
-     *
-     * @param $condition
+     * @param string $pipeline
      * @return $this
      */
-    public function condition($condition)
+    public function setPipeline($pipeline)
+    {
+        $this->pipeline = $pipeline;
+        if ($this->pipeline == self::XMPP_PIPELINE)
+            if (!$this->message_id)
+                $this->message_id = $this->generateMessageId();
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getCondition()
+    {
+        return $this->condition;
+    }
+
+    /**
+     * @param null|string $condition
+     * @return $this
+     */
+    public function setCondition($condition)
     {
         $this->condition = $condition;
 
@@ -150,40 +189,13 @@ class FcmPacket
     }
 
     /**
-     * generate and return a unique message id for xmpp
-     *
-     * @return string
+     * @return mixed
      */
-    protected function getMessageId()
+    public function getMessageId()
     {
-        mt_srand((double)microtime() * 10000); // optional for php 4.2.0 and up.
-        $char_id = strtoupper(md5(uniqid(rand(), true)));
-        $hyphen = chr(45); // "-"
-        $message_id = substr($char_id, 0, 8) . $hyphen
-            . substr($char_id, 8, 4) . $hyphen
-            . substr($char_id, 12, 4) . $hyphen
-            . substr($char_id, 16, 4) . $hyphen
-            . substr($char_id, 20, 12);
-        return $message_id;
+        return $this->message_id;
     }
 
-    /**
-     * assign new unique message id
-     *
-     * @return $this
-     */
-    protected function setMessageId()
-    {
-        if($this->pipeline == self::XMPP_PIPELINE)
-            $this->message_id = $this->getMessageId();
-
-        return $this;
-    }
-    
-    public function messageId()
-    {
-        return $message_id = $this->pipeline == self::XMPP_PIPELINE ? $this->message_id : null;
-    }
 
     /**
      * Get the instance as an array.
@@ -206,7 +218,7 @@ class FcmPacket
                 $packet['condition'] = $this->condition;
             }
 
-            if($this->message_id)
+            if ($this->message_id)
                 $packet['message_id'] = $this->message_id;
         }else
         {
@@ -231,8 +243,8 @@ class FcmPacket
             }
         }
 
-        if ($this->message)
-            $packet = array_merge($packet, $this->message->toArray());
+        if ($this->payload)
+            $packet = array_merge($packet, $this->payload->toArray());
         
         return $packet;
     }
@@ -254,5 +266,15 @@ class FcmPacket
     public function __toString()
     {
         return $this->toJson();
+    }
+
+    /**
+     * @return bool|string
+     */
+    protected function generateMessageId()
+    {
+        $char_id = strtoupper(md5(uniqid(rand(), true)));
+        $message_id =  substr($char_id, 20, 12);
+        return $message_id;
     }
 }

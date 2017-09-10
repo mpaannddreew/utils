@@ -6,10 +6,10 @@
  * Time: 9:17 PM
  */
 
-namespace FannyPack\Utils;
+namespace FannyPack\Utils\Fcm\Messages;
 
 
-class FcmMessage
+class Payload
 {
     const PRIORITY_NORMAL = 'normal';
     const PRIORITY_HIGH = 'high';
@@ -20,14 +20,14 @@ class FcmMessage
      *
      * @var string
      */
-    public $title;
+    protected $title;
 
     /**
      * The message of the notification.
      *
      * @var string
      */
-    public $message;
+    protected $message;
 
     /**
      * notification payload
@@ -41,22 +41,22 @@ class FcmMessage
      * 
      * @var array
      */
-    public $data = [];
+    protected $data = [];
 
     /**
      * @var null|string
      */
-    public $collapse_key;
+    protected $collapse_key;
 
     /**
      * @var string
      */
-    public $priority = self::PRIORITY_NORMAL;
+    protected $priority = self::PRIORITY_NORMAL;
 
     /**
      * @var null|string
      */
-    public $time_to_live;
+    protected $time_to_live;
 
     /**
      * @param string|null $title
@@ -78,30 +78,38 @@ class FcmMessage
     }
 
     /**
-     * Set the title of the notification.
-     *
-     * @param string $title
-     *
-     * @return $this
+     * @return string
      */
-    public function title($title)
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     * @return Payload
+     */
+    public function setTitle($title)
     {
         $this->title = $title;
-
         return $this->notification();
     }
 
     /**
-     * Set the message of the notification.
-     *
-     * @param string $message
-     *
-     * @return $this
+     * @return string
      */
-    public function message($message)
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    /**
+     * @param string $message
+     * @return Payload
+     */
+    public function setMessage($message)
     {
         $this->message = $message;
-
         return $this->notification();
     }
 
@@ -110,7 +118,7 @@ class FcmMessage
      *
      * @return $this
      */
-    public function notification()
+    protected function notification()
     {
         $this->notification = [
             'body' => $this->message,
@@ -121,13 +129,18 @@ class FcmMessage
     }
 
     /**
-     * Set the priority of the notification.
-     *
+     * @return string
+     */
+    public function getPriority()
+    {
+        return $this->priority;
+    }
+
+    /**
      * @param string $priority
-     *
      * @return $this
      */
-    public function priority($priority)
+    public function setPriority($priority)
     {
         $this->priority = $priority;
 
@@ -135,13 +148,18 @@ class FcmMessage
     }
 
     /**
-     * Set the time_to_live of the notification.
-     *
-     * @param int $time_to_live
-     *
+     * @return null|string
+     */
+    public function getTimeToLive()
+    {
+        return $this->time_to_live;
+    }
+
+    /**
+     * @param null|string $time_to_live
      * @return $this
      */
-    public function time_to_live($time_to_live)
+    public function setTimeToLive($time_to_live)
     {
         $this->time_to_live = $time_to_live;
 
@@ -149,13 +167,18 @@ class FcmMessage
     }
 
     /**
-     * Set the collapse key of the notification.
-     *
-     * @param string $collapse_key
-     *
+     * @return null|string
+     */
+    public function getCollapseKey()
+    {
+        return $this->collapse_key;
+    }
+
+    /**
+     * @param null|string $collapse_key
      * @return $this
      */
-    public function collapse_key($collapse_key)
+    public function setCollapseKey($collapse_key)
     {
         $this->collapse_key = $collapse_key;
 
@@ -191,6 +214,14 @@ class FcmMessage
     }
 
     /**
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
      * Get the instance as an array.
      *
      * @return array
@@ -198,8 +229,9 @@ class FcmMessage
     public function toArray()
     {
         $message = [];
-        if ($this->notification) 
-            $message['notification'] = $this->notification;
+        if ($this->title && $this->message)
+            if ($this->notification)
+                $message['notification'] = $this->notification;
         
         if ($this->data) 
             $message['data'] = $this->data;
