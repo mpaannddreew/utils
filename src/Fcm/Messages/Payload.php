@@ -121,8 +121,8 @@ class Payload
     protected function notification()
     {
         $this->notification = [
-            'body' => $this->message,
-            'title' => $this->title
+            'title' => $this->title,
+            'body' => $this->message
         ];
 
         return $this;
