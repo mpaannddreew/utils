@@ -3,9 +3,7 @@
 namespace FannyPack\Utils\Fcm\Events;
 
 
-use FannyPack\Utils\Fcm\Packet;
-
-class UnavailableErrorEvent
+class InvalidJson
 {
     /**
      * @var $fcm_registration_id
@@ -13,20 +11,19 @@ class UnavailableErrorEvent
     public $fcm_registration_id;
 
     /**
-     * @var Packet
+     * @var $error_description
      */
-    public $packet;
+    public $error_description;
 
     /**
      * Create a new event instance.
      *
      * @param $fcm_registration_id
-     * @param Packet $packet
+     * @param $error_description
      */
-    public function __construct($fcm_registration_id, Packet $packet)
+    public function __construct($fcm_registration_id, $error_description)
     {
         $this->fcm_registration_id = $fcm_registration_id;
-        $this->packet = $packet;
-        $this->packet->setRegistrationIds([$this->fcm_registration_id]);
+        $this->error_description = $error_description;
     }
 }

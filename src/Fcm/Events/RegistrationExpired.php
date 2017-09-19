@@ -3,7 +3,7 @@
 namespace FannyPack\Utils\Fcm\Events;
 
 
-class RegistrationExpiryEvent
+class RegistrationExpired
 {
     /**
      * @var $old_fcm_registration_id

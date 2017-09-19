@@ -3,7 +3,7 @@
 namespace FannyPack\Utils\Fcm\Events;
 
 
-class MessageAcknowledgementEvent
+class MessageAcknowledged
 {
     /**
      * @var $message_id

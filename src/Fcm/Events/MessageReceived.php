@@ -2,7 +2,8 @@
 
 namespace FannyPack\Utils\Fcm\Events;
 
-class ConnectionDrainageEvent
+
+class MessageReceived
 {
     /**
      * @var $data

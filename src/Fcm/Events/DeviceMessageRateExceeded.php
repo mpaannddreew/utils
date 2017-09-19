@@ -3,7 +3,7 @@
 namespace FannyPack\Utils\Fcm\Events;
 
 
-class RegistrationErrorEvent
+class DeviceMessageRateExceeded
 {
     /**
      * @var $fcm_registration_id

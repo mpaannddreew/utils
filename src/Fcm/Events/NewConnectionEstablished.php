@@ -2,7 +2,7 @@
 
 namespace FannyPack\Utils\Fcm\Events;
 
-class NewConnectionEstablishedEvent
+class NewConnectionEstablished
 {
     /**
      * @var $jid

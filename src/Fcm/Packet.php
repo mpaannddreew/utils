@@ -57,6 +57,11 @@ class Packet
     protected $message_id;
 
     /**
+     * @var bool
+     */
+    protected $delivery_receipt_requested = false;
+
+    /**
      * Packet constructor.
      * @param string $pipeline
      * @param string|null $registration_id
@@ -73,6 +78,17 @@ class Packet
         $this->payload = $payload;
         if ($this->pipeline == self::XMPP_PIPELINE)
             $this->message_id = $this->generateMessageId();
+    }
+
+    /**
+     * request delivery receipt
+     * @return $this
+     */
+    public function requestDeliveryReceipt()
+    {
+        $this->delivery_receipt_requested = true;
+
+        return $this;
     }
 
     /**
@@ -220,6 +236,9 @@ class Packet
 
             if ($this->message_id)
                 $packet['message_id'] = $this->message_id;
+
+            if ($this->delivery_receipt_requested)
+                $packet['delivery_receipt_requested'] = true;
         }else
         {
             if ($this->to && $this->registration_ids && $this->condition)

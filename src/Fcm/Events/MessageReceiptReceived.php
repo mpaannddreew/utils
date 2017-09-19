@@ -2,8 +2,7 @@
 
 namespace FannyPack\Utils\Fcm\Events;
 
-
-class MessageReceivedEvent
+class MessageReceiptReceived
 {
     /**
      * @var $data
