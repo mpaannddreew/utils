@@ -86,7 +86,8 @@ class Packet
      */
     public function requestDeliveryReceipt()
     {
-        $this->delivery_receipt_requested = true;
+        if ($this->pipeline == self::XMPP_PIPELINE)
+            $this->delivery_receipt_requested = true;
 
         return $this;
     }
