@@ -260,6 +260,9 @@ class Packet
             }elseif($this->registration_ids)
             {
                 $packet['registration_ids'] = $this->registration_ids;
+            }elseif ($this->condition)
+            {
+                $packet['condition'] = $this->condition;
             }
         }
 
