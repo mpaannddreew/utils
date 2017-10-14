@@ -104,8 +104,19 @@ class Response
         return $this->results;
     }
 
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return (array)$this->contents;
+    }
+
+    /**
+     * @return string
+     */
     public function __toString()
     {
-        return json_encode((array)$this->contents);
+        return json_encode($this->toArray());
     }
 }
