@@ -193,7 +193,7 @@ class Payload
      *
      * @return $this
      */
-    public function data($key, $value)
+    public function addData($key, $value)
     {
         $this->data[$key] = $value;
 
