@@ -27,7 +27,7 @@ class AbstractError
      * @param $fcm_registration_id
      * @param $error_description
      */
-    public function __construct($error, $fcm_registration_id, $error_description)
+    public function __construct($error, $fcm_registration_id, $error_description = null)
     {
         $this->error = $error;
         $this->fcm_registration_id = $fcm_registration_id;
