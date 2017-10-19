@@ -30,12 +30,12 @@ abstract class ControlMessage extends AbstractMessage
      */
     public function __construct(Packet $packet = null, $message_id)
     {
-        parent::__construct($packet);
         $this->message_id = $message_id;
         $this->setMessageType();
+        parent::__construct($packet);
     }
 
-    /**
+    /**q
      * @return void
      */
     abstract protected function setMessageType();
