@@ -9,9 +9,12 @@
 namespace FannyPack\Utils\Fcm;
 
 
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
+use JsonSerializable;
 use Psr\Http\Message\ResponseInterface;
 
-class Response
+class Response implements Arrayable, Jsonable, JsonSerializable
 {
     /**
      * @var $multicast_id
@@ -113,10 +116,30 @@ class Response
     }
 
     /**
+     * Specify data which should be serialized to JSON
+     * @return array
+     */
+    function jsonSerialize()
+    {
+        return $this->toArray();
+    }
+
+    /**
+     * Convert the object to its JSON representation.
+     *
+     * @param  int $options
+     * @return string
+     */
+    public function toJson($options = 0)
+    {
+        return json_encode($this->toArray());
+    }
+
+    /**
      * @return string
      */
     public function __toString()
     {
-        return json_encode($this->toArray());
+        return $this->toJson();
     }
 }

@@ -7,7 +7,7 @@
         }
     ],
     "require": {
-
+        "illuminate/Support": "~5.4"
     },
     "autoload": {
         "psr-4": {
