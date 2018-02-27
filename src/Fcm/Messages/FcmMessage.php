@@ -9,7 +9,7 @@
 namespace FannyPack\Utils\Fcm\Messages;
 
 
-use FannyPack\Utils\Fcm\Packet;
+use FannyPack\Utils\Fcm\XmppPacket;
 
 class FcmMessage extends AbstractMessage
 {
@@ -20,10 +20,10 @@ class FcmMessage extends AbstractMessage
 
     /**
      * FcmMessage constructor.
-     * @param Packet $packet
+     * @param XmppPacket $packet
      * @param string|null $message_id
      */
-    public function __construct(Packet $packet, $message_id = null)
+    public function __construct(XmppPacket $packet, $message_id = null)
     {
         $this->message_id = $message_id;
         parent::__construct($packet);

@@ -3,7 +3,7 @@
 namespace FannyPack\Utils\Fcm\Events;
 
 
-use FannyPack\Utils\Fcm\Packet;
+use FannyPack\Utils\Fcm\HttpPacket;
 
 class UnavailableError
 {
@@ -13,7 +13,7 @@ class UnavailableError
     public $fcm_registration_id;
 
     /**
-     * @var Packet
+     * @var HttpPacket
      */
     public $packet;
 
@@ -21,9 +21,9 @@ class UnavailableError
      * Create a new event instance.
      *
      * @param $fcm_registration_id
-     * @param Packet $packet
+     * @param HttpPacket $packet
      */
-    public function __construct($fcm_registration_id, Packet $packet)
+    public function __construct($fcm_registration_id, HttpPacket $packet)
     {
         $this->fcm_registration_id = $fcm_registration_id;
         $this->packet = $packet;

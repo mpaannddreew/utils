@@ -9,7 +9,7 @@
 namespace FannyPack\Utils\Fcm\Messages;
 
 
-use FannyPack\Utils\Fcm\Packet;
+use FannyPack\Utils\Fcm\XmppPacket;
 
 abstract class ControlMessage extends AbstractMessage
 {
@@ -25,10 +25,10 @@ abstract class ControlMessage extends AbstractMessage
 
     /**
      * ControlMessage constructor.
-     * @param Packet|null $packet
+     * @param XmppPacket|null $packet
      * @param $message_id
      */
-    public function __construct(Packet $packet = null, $message_id)
+    public function __construct(XmppPacket $packet = null, $message_id)
     {
         $this->message_id = $message_id;
         $this->setMessageType();

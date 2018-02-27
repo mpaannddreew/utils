@@ -13,16 +13,6 @@ use FannyPack\Utils\Fcm\Messages\Payload;
 
 class Packet
 {
-    const HTTP_PIPELINE = 'http';
-    const XMPP_PIPELINE = 'xmpp';
-
-    /**
-     * recipient registration ids
-     *
-     * @var array
-     */
-    protected $registration_ids = [];
-
     /**
      * recipient registration id | topic | group id
      *
@@ -45,51 +35,21 @@ class Packet
     protected $payload;
 
     /**
-     * fcm connection server protocol
-     *
-     * @var string
+     * @var array
      */
-    protected $pipeline = self::HTTP_PIPELINE;
-
-    /**
-     * @var
-     */
-    protected $message_id;
-
-    /**
-     * @var bool
-     */
-    protected $delivery_receipt_requested = false;
+    protected $packet = [];
 
     /**
      * Packet constructor.
-     * @param string $pipeline
      * @param string|null $registration_id
-     * @param array $registration_ids
      * @param string|null $condition
      * @param Payload|null $payload
      */
-    public function __construct($pipeline = self::HTTP_PIPELINE, $registration_id = null, $registration_ids = [], $condition = null, Payload $payload = null)
+    public function __construct($registration_id = null, $condition = null, Payload $payload = null)
     {
-        $this->pipeline = $pipeline;
         $this->to = $registration_id;
-        $this->registration_ids = $registration_ids;
         $this->condition = $condition;
         $this->payload = $payload;
-        if ($this->pipeline == self::XMPP_PIPELINE)
-            $this->message_id = $this->generateMessageId();
-    }
-
-    /**
-     * request delivery receipt
-     * @return $this
-     */
-    public function requestDeliveryReceipt()
-    {
-        if ($this->pipeline == self::XMPP_PIPELINE)
-            $this->delivery_receipt_requested = true;
-
-        return $this;
     }
 
     /**
@@ -133,60 +93,6 @@ class Packet
     }
 
     /**
-     * @return array
-     */
-    public function getRegistrationIds()
-    {
-        return $this->registration_ids;
-    }
-
-    /**
-     * @param array $registration_ids
-     * @return $this
-     */
-    public function setRegistrationIds($registration_ids)
-    {
-        $this->registration_ids = $registration_ids;
-
-        return $this;
-    }
-
-    /**
-     * add registration_id to recipient array
-     *
-     * @param $registration_id
-     * @return $this
-     */
-    public function addRegistrationId($registration_id)
-    {
-        $this->registration_ids[] = $registration_id;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPipeline()
-    {
-        return $this->pipeline;
-    }
-
-    /**
-     * @param string $pipeline
-     * @return $this
-     */
-    public function setPipeline($pipeline)
-    {
-        $this->pipeline = $pipeline;
-        if ($this->pipeline == self::XMPP_PIPELINE)
-            if (!$this->message_id)
-                $this->message_id = $this->generateMessageId();
-
-        return $this;
-    }
-
-    /**
      * @return null|string
      */
     public function getCondition()
@@ -206,70 +112,16 @@ class Packet
     }
 
     /**
-     * @return mixed
-     */
-    public function getMessageId()
-    {
-        return $this->message_id;
-    }
-
-
-    /**
      * Get the instance as an array.
      *
      * @return array
      */
     public function toArray()
     {
-        $packet = [];
-        if ($this->pipeline == self::XMPP_PIPELINE)
-        {
-            if ($this->to && $this->condition)
-            {
-                $packet['condition'] = $this->condition;
-            }elseif($this->to)
-            {
-                $packet['to'] = $this->to;
-            }elseif($this->condition)
-            {
-                $packet['condition'] = $this->condition;
-            }
-
-            if ($this->message_id)
-                $packet['message_id'] = $this->message_id;
-
-            if ($this->delivery_receipt_requested)
-                $packet['delivery_receipt_requested'] = true;
-        }else
-        {
-            if ($this->to && $this->registration_ids && $this->condition)
-            {
-                $packet['registration_ids'] = $this->registration_ids;
-            }elseif ($this->to && $this->registration_ids)
-            {
-                $packet['registration_ids'] = $this->registration_ids;
-            }elseif ($this->registration_ids && $this->condition)
-            {
-                $packet['registration_ids'] = $this->registration_ids;
-            }elseif ($this->to && $this->condition)
-            {
-                $packet['condition'] = $this->condition;
-            }elseif($this->to)
-            {
-                $packet['to'] = $this->to;
-            }elseif($this->registration_ids)
-            {
-                $packet['registration_ids'] = $this->registration_ids;
-            }elseif ($this->condition)
-            {
-                $packet['condition'] = $this->condition;
-            }
-        }
-
         if ($this->payload)
-            $packet = array_merge($packet, $this->payload->toArray());
+            $this->packet = array_merge($this->packet, $this->payload->toArray());
         
-        return $packet;
+        return $this->packet;
     }
 
     /**
@@ -289,15 +141,5 @@ class Packet
     public function __toString()
     {
         return $this->toJson();
-    }
-
-    /**
-     * @return bool|string
-     */
-    protected function generateMessageId()
-    {
-        $char_id = strtoupper(md5(uniqid(rand(), true)));
-        $message_id =  substr($char_id, 20, 12);
-        return $message_id;
     }
 }

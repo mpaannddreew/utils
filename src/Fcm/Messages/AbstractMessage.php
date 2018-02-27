@@ -9,7 +9,7 @@
 namespace FannyPack\Utils\Fcm\Messages;
 
 
-use FannyPack\Utils\Fcm\Packet;
+use FannyPack\Utils\Fcm\XmppPacket;
 
 abstract class AbstractMessage
 {
@@ -24,32 +24,21 @@ abstract class AbstractMessage
     protected $end = '</gcm></message>';
 
     /**
-     * @var Packet
+     * @var XmppPacket
      */
     protected $packet;
 
     /**
      * AbstractMessage constructor.
-     * @param Packet|null $packet
+     * @param XmppPacket|null $packet
      */
-    public function __construct(Packet $packet = null)
+    public function __construct(XmppPacket $packet = null)
     {
-        $this->checkPacket($packet);
         $this->packet = $packet;
     }
 
     /**
-     * @param Packet|null $packet
-     */
-    protected function checkPacket(Packet $packet = null)
-    {
-        if ($packet)
-            if ($packet->getPipeline() != Packet::XMPP_PIPELINE)
-                throw new \InvalidArgumentException('Packet should be of xmpp pipeline');
-    }
-
-    /**
-     * @return Packet
+     * @return XmppPacket
      */
     public function getPacket()
     {
@@ -57,11 +46,10 @@ abstract class AbstractMessage
     }
 
     /**
-     * @param Packet $packet
+     * @param XmppPacket $packet
      */
-    public function setPacket(Packet $packet)
+    public function setPacket(XmppPacket $packet)
     {
-        $this->checkPacket($packet);
         $this->packet = $packet;
     }
 
