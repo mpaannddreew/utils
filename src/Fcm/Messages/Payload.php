@@ -59,6 +59,11 @@ class Payload
     protected $time_to_live;
 
     /**
+     * @var array
+     */
+    protected $payload = [];
+
+    /**
      * @param string|null $title
      * @param string|null $message
      * @param array $data
@@ -74,7 +79,6 @@ class Payload
         $this->priority = $priority;
         $this->collapse_key = $collapse_key;
         $this->time_to_live = $time_to_live;
-        $this->notification();
     }
 
     /**
@@ -92,7 +96,7 @@ class Payload
     public function setTitle($title)
     {
         $this->title = $title;
-        return $this->notification();
+        return $this;
     }
 
     /**
@@ -110,13 +114,11 @@ class Payload
     public function setMessage($message)
     {
         $this->message = $message;
-        return $this->notification();
+        return $this;
     }
 
     /**
      * create notification payload.
-     *
-     * @return $this
      */
     protected function notification()
     {
@@ -124,8 +126,6 @@ class Payload
             'title' => $this->title,
             'body' => $this->message
         ];
-
-        return $this;
     }
 
     /**
@@ -186,7 +186,7 @@ class Payload
     }
 
     /**
-     * Add data to the notification.
+     * Add data to the data payload.
      *
      * @param string $key
      * @param mixed $value
@@ -201,14 +201,14 @@ class Payload
     }
 
     /**
-     * Override the data of the notification.
+     * add an array of data to the data payload.
      *
      * @param array $data
      * @return $this
      */
     public function setData($data)
     {
-        $this->data = $data;
+        $this->data = array_merge($this->data, $data);
 
         return $this;
     }
@@ -228,24 +228,25 @@ class Payload
      */
     public function toArray()
     {
-        $message = [];
         if ($this->title && $this->message)
-            if ($this->notification)
-                $message['notification'] = $this->notification;
+        {
+            $this->notification();
+            $this->payload['notification'] = $this->notification;
+        }
         
         if ($this->data) 
-            $message['data'] = $this->data;
+            $this->payload['data'] = $this->data;
         
         if ($this->collapse_key) 
-            $message['collapse_key'] = $this->collapse_key;
+            $this->payload['collapse_key'] = $this->collapse_key;
         
         if ($this->priority) 
-            $message['priority'] = $this->priority;
+            $this->payload['priority'] = $this->priority;
 
         if ($this->time_to_live)
-            $message['time_to_live'] = $this->time_to_live;
+            $this->payload['time_to_live'] = $this->time_to_live;
         
-        return $message;
+        return $this->payload;
     }
 
     /**

@@ -6,17 +6,17 @@ namespace FannyPack\Utils\Fcm\Events;
 class MessageReceived
 {
     /**
-     * @var $data
+     * @var $mData
      */
-    public $data;
+    public $mData = [];
 
     /**
      * Create a new event instance.
      *
-     * @param $data
+     * @param $mData
      */
-    public function __construct($data)
+    public function __construct($mData)
     {
-        $this->data = $data;
+        $this->mData = $mData;
     }
 }

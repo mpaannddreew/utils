@@ -11,7 +11,7 @@ namespace FannyPack\Utils\Fcm;
 
 use FannyPack\Utils\Fcm\Messages\Payload;
 
-class Packet
+abstract class Packet
 {
     /**
      * recipient registration id | topic | group id
